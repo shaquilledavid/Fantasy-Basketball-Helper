@@ -1,7 +1,14 @@
 import requests
+from datetime import date
+from datetime import timedelta
 from nba_api.stats.static import players
 
 from nba_api.stats.endpoints import commonplayerinfo
+
+# Today's Date
+today = date.today().isoformat()
+tomorrowDelta = timedelta(hours=24)
+tomorrow = (date.today() + tomorrowDelta).isoformat()
 
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
