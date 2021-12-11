@@ -5,14 +5,13 @@ from nba_api.stats.static import players
 
 from nba_api.stats.endpoints import commonplayerinfo
 
-# Today's Date
+# Today's Date... documentation: https://docs.python.org/3/library/datetime.html
 today = date.today().isoformat()
 tomorrowDelta = timedelta(hours=24)
 tomorrow = (date.today() + tomorrowDelta).isoformat()
 
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
-
 
 from nba_api.stats.static import teams
 from nba_api.stats.endpoints import teamgamelog
@@ -25,13 +24,13 @@ example = teamgamelog.TeamGameLog(teams_id[0][0]).get_dict()
 
 response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
 
-
 #trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
-with open("test.txt", "a") as o:
-    o.write(str(response.json()['lscd'][3]))
-    o.close()
+### TESTING PURPOSES ONLY ###
+#with open("test.txt", "a") as o:
+#    o.write(str(response.json()['lscd'][3]))
+#    o.close()
     
 #using a test text file, I write each set separately to read each section (printing in python console causes unresponsiveness)
 # ['lscd'][0] -> January, ['lscd'][1] -> February, ['lscd'][2] -> March... [3] -> April, [4] -> October, [5] -> November, [6] -> December
@@ -39,4 +38,30 @@ with open("test.txt", "a") as o:
 #the data is structured in months. in each month, there is a list of all games, under the dictionary key 'g'
 #so, we can retrieve the details of a game as follows: 
 example_game = (response.json()['lscd'][3]['mscd']['g'][2])
+
+#Number to month mapping
+months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September',
+          10: 'October', 11: 'November', 12: 'December'}
+
+def gamesToday():
+    today = date.today()
+    month = months[today.month]
+    season_months = []
+    for i in response.json()['lscd']:
+        season_months.append(i['mscd']['mon'])
+
+    if month not in season_months:
+        return 'No Games Today'
+
+    games = []
+    
+    #new index variable to keep track of the season months, as the data comes with January mapped to 1, Feb to 2, ... December to 6
+    index = season_months.index(month) 
+
+    #so for every game in this month, if the game date matches todays date, add it to the list of today's games
+    for game in response.json()['lscd'][index]['mscd']['g']:        
+        if game['gdte'] == today.isoformat():
+            games.append(game['gcode'])
+
+    return games
 
