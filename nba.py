@@ -2,7 +2,8 @@ import requests
 from datetime import date
 from datetime import timedelta
 from nba_api.stats.static import players
-
+from nba_api.stats.static import teams
+from nba_api.stats.endpoints import teamgamelog
 from nba_api.stats.endpoints import commonplayerinfo
 
 # Today's Date... documentation: https://docs.python.org/3/library/datetime.html
@@ -13,15 +14,18 @@ tomorrow = (date.today() + tomorrowDelta).isoformat()
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
-from nba_api.stats.static import teams
-from nba_api.stats.endpoints import teamgamelog
-
+# All teams
 teams = teams.get_teams()
+
+# A structured list with teams and their respective ids
 teams_id = [[str(t['id']), t['full_name']] for t in teams]
 
+# A structured dictionary with teams and their abbreviations
+teams_abbrev = {}
+for team in teams:
+    teams_abbrev[team['abbreviation']] = team['full_name']
 
-example = teamgamelog.TeamGameLog(teams_id[0][0]).get_dict()
-
+# The main API call
 response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
 
 #trying to work through the api call to understand how the data is stored
@@ -64,4 +68,17 @@ def gamesToday():
             games.append(game['gcode'])
 
     return games
+
+def todaysSchedule():
+    """A pretty print representation of the NBA games scheduled for today"""
+    games = gamesToday()
+    sched = []
+    for game in games:
+        team1 = game[9:12]
+        team2 = game[12:]
+        sched.append(teams_abbrev[team1] + ' at ' + teams_abbrev[team2])
+
+    return sched
+        
+        
 
