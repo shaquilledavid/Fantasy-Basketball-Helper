@@ -28,6 +28,9 @@ for team in teams:
 # The main API call
 response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
 
+# Retrieve the current active players
+players = requests.get("http://data.nba.net/10s/prod/v1/2021/players.json")
+
 #trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
@@ -135,5 +138,5 @@ def backToBack():
     for team in teamsThatPlayToday():
         if team in teamsThatPlayTomorrow():
             b2b.append(team)
-
+            
     return b2b
