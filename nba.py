@@ -47,12 +47,13 @@ example_game = (response.json()['lscd'][3]['mscd']['g'][2])
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September',
           10: 'October', 11: 'November', 12: 'December'}
 
+season_months = []
+for i in response.json()['lscd']:
+    season_months.append(i['mscd']['mon'])
+        
 def gamesToday():
     today = date.today()
     month = months[today.month]
-    season_months = []
-    for i in response.json()['lscd']:
-        season_months.append(i['mscd']['mon'])
 
     if month not in season_months:
         return 'No Games Today'
@@ -69,24 +70,20 @@ def gamesToday():
 
     return games
 
-def todaysSchedule():
+def scheduleToday():
     """A pretty print representation of the NBA games scheduled for today"""
     games = gamesToday()
     sched = []
     for game in games:
-        team1 = game[9:12]
-        team2 = game[12:]
-        sched.append(teams_abbrev[team1] + ' at ' + teams_abbrev[team2])
+        home = game[9:12]
+        away = game[12:]
+        sched.append(teams_abbrev[home] + ' at ' + teams_abbrev[away])
 
     return sched
         
-
 def gamesTomorrow():
     tomorrow = date.today() + tomorrowDelta
     month = months[tomorrow.month]
-    season_months = []
-    for i in response.json()['lscd']:
-        season_months.append(i['mscd']['mon'])
 
     if month not in season_months:
         return 'No Games Today'
@@ -98,3 +95,45 @@ def gamesTomorrow():
             games.append(game['gcode'])
 
     return games
+
+def scheduleTomorrow():
+    """A pretty print representation of the NBA games scheduled for tomorrow"""
+    games = gamesTomorrow()
+    sched = []
+    for game in games:
+        home = game[9:12]
+        away = game[12:]
+        sched.append(teams_abbrev[home] + ' at ' + teams_abbrev[away])
+
+    return sched
+
+def teamsThatPlayToday():
+    """Return a list of teams that play today"""
+    teams = []
+    for game in gamesToday():
+        home = game[9:12]
+        away = game[12:]
+        teams.append(teams_abbrev[home])
+        teams.append(teams_abbrev[away])
+
+    return teams
+
+def teamsThatPlayTomorrow():
+    """Return a list of teams that play tomorrow"""
+    teams = []
+    for game in gamesTomorrow():
+        home = game[9:12]
+        away = game[12:]
+        teams.append(teams_abbrev[home])
+        teams.append(teams_abbrev[away])
+
+    return teams
+    
+def backToBack():
+    """Return a list of teams that play in a back-to-back. This means they have a game today and tomorrow."""
+    b2b = []
+    for team in teamsThatPlayToday():
+        if team in teamsThatPlayTomorrow():
+            b2b.append(team)
+
+    return b2b
