@@ -80,5 +80,21 @@ def todaysSchedule():
 
     return sched
         
-        
 
+def gamesTomorrow():
+    tomorrow = date.today() + tomorrowDelta
+    month = months[tomorrow.month]
+    season_months = []
+    for i in response.json()['lscd']:
+        season_months.append(i['mscd']['mon'])
+
+    if month not in season_months:
+        return 'No Games Today'
+
+    games = []
+    index = season_months.index(month)
+    for game in response.json()['lscd'][index]['mscd']['g']:        
+        if game['gdte'] == tomorrow.isoformat():
+            games.append(game['gcode'])
+
+    return games
