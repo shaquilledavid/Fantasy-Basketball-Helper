@@ -14,24 +14,48 @@ tomorrow = (date.today() + tomorrowDelta).isoformat()
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
+# The main API call
+response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
+
 # All teams
 teams = teams.get_teams()
 
-# A structured list with teams and their respective ids
-teams_id = [[str(t['id']), t['full_name']] for t in teams]
-
+# A dictionary containing teams and their respective IDs
+teamsId = {}
+for t in teams:
+    teamsId[str(t['id'])] = t['full_name']
+    
 # A structured dictionary with teams and their abbreviations
 teams_abbrev = {}
 for team in teams:
     teams_abbrev[team['abbreviation']] = team['full_name']
 
-# The main API call
-response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
-
 # Retrieve the current active players
-players = requests.get("http://data.nba.net/10s/prod/v1/2021/players.json")
+p = requests.get("http://data.nba.net/10s/prod/v1/2021/players.json")
+players = p.json()['league']['standard']
 
-#trying to work through the api call to understand how the data is stored
+# A dictionary containing active players and the team the last played for
+activePlayers = {}
+
+# A dictionary containing teams and the players that play(ed) for them this year
+rosters = {}
+
+for player in players:
+    if len(player['teams']) > 0:
+        if player['teams'][-1]['seasonEnd'] == '2021':
+            link = activePlayers[player['firstName'] + ' ' + player['lastName']] = player['teams'][-1]['teamId']
+            #now add the player to their team's roster
+            if teamsId[link] in rosters:
+                rosters[teamsId[link]].append(player['firstName'] + ' ' + player['lastName'])
+            else:
+                rosters[teamsId[link]] = []
+    else:
+        pass
+
+
+
+
+# trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
 ### TESTING PURPOSES ONLY ###
