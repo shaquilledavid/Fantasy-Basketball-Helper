@@ -53,8 +53,6 @@ for player in players:
         pass
 
 
-
-
 # trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
@@ -164,3 +162,10 @@ def backToBack():
             b2b.append(team)
             
     return b2b
+
+
+"""
+d = today.date()
+ic = d.isocalendar()
+ic.week = 2
+"""
