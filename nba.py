@@ -163,6 +163,23 @@ def backToBack():
             
     return b2b
 
+def gamesDayOf(day):
+    """A pretty print representation of the NBA games scheduled for inputted day"""
+    dateobject = date.fromisoformat(day) #turn the inputted date into a datetime object
+    month = months[dateobject.month]
+
+    if month not in season_months:
+        return 'No Games On This Day'
+    
+    games = []
+    index = season_months.index(month) 
+
+    #so for every game in this month, if the game date matches todays date, add it to the list of today's games
+    for game in response.json()['lscd'][index]['mscd']['g']:        
+        if game['gdte'] == dateobject.isoformat():
+            games.append(game['gcode'])
+
+    return games
 
 """
 d = today.date()
