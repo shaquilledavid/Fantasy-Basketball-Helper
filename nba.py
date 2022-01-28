@@ -181,6 +181,17 @@ def gamesDayOf(day):
 
     return games
 
+def scheduleDayOf(day):
+    """A pretty print representation of the NBA games scheduled for the inputted date"""
+    games = gamesDayOf(day)
+    sched = []
+    for game in games:
+        home = game[9:12]
+        away = game[12:]
+        sched.append(teams_abbrev[home] + ' at ' + teams_abbrev[away])
+
+    return sched
+
 """
 d = today.date()
 ic = d.isocalendar()
