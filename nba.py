@@ -180,6 +180,17 @@ def gamesDayOf(day):
 
     return games
 
+def teamsThatPlayOn(day):
+    teams = []
+    for game in gamesDayOf(day):
+        home = game[9:12]
+        away = game[12:]
+        teams.append(teams_abbrev[home])
+        teams.append(teams_abbrev[away])
+
+    return teams
+    
+
 def scheduleDayOf(day):
     """A pretty print representation of the NBA games scheduled for the inputted date"""
     games = gamesDayOf(day)
@@ -190,6 +201,50 @@ def scheduleDayOf(day):
         sched.append(teams_abbrev[home] + ' at ' + teams_abbrev[away])
 
     return sched
+
+def backToBackNext(day):
+    """Return a list of teams that play in a back-to-back on this day and the next."""
+    same_day = date.fromisoformat(day)
+    next_day = same_day + tomorrowDelta
+    
+    b2b = []
+    
+    for team in teamsThatPlayOn(day):
+        if team in teamsThatPlayOn(date.isoformat(next_day)):
+            b2b.append(team)
+            
+    return b2b
+
+def backToBackPrevious(day):
+    """Return a list of teams that play in a back-to-back on this day and the next."""
+    same_day = date.fromisoformat(day)
+    previous_day = same_day + tomorrowDelta
+    
+    b2b = []
+    
+    for team in teamsThatPlayOn(day):
+        if team in teamsThatPlayOn(date.isoformat(previous_day)):
+            b2b.append(team)
+            
+    return b2b
+
+def backToBackDayOf(day):
+    same_day = date.fromisoformat(day)
+    next_day = same_day + tomorrowDelta
+    previous_day = same_day - tomorrowDelta
+
+    dayAndNext = 'The teams that play on this date and the next are: '
+    dayAndBefore = 'The teams that play on this date and the previous are: '
+
+    for team in backToBackNext(day):
+        dayAndNext += team + ', '
+
+    for team in backToBackPrevious(day):
+        dayAndBefore += team + ', '
+
+
+    return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
+
 
 """
 d = today.date()
