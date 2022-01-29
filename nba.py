@@ -52,9 +52,6 @@ for player in players:
     else:
         pass
 
-
-
-
 # trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
@@ -164,3 +161,38 @@ def backToBack():
             b2b.append(team)
             
     return b2b
+
+def gamesDayOf(day):
+    """A pretty print representation of the NBA games scheduled for inputted day"""
+    dateobject = date.fromisoformat(day) #turn the inputted date into a datetime object
+    month = months[dateobject.month]
+
+    if month not in season_months:
+        return 'No Games On This Day'
+    
+    games = []
+    index = season_months.index(month) 
+
+    #so for every game in this month, if the game date matches todays date, add it to the list of today's games
+    for game in response.json()['lscd'][index]['mscd']['g']:        
+        if game['gdte'] == dateobject.isoformat():
+            games.append(game['gcode'])
+
+    return games
+
+def scheduleDayOf(day):
+    """A pretty print representation of the NBA games scheduled for the inputted date"""
+    games = gamesDayOf(day)
+    sched = []
+    for game in games:
+        home = game[9:12]
+        away = game[12:]
+        sched.append(teams_abbrev[home] + ' at ' + teams_abbrev[away])
+
+    return sched
+
+"""
+d = today.date()
+ic = d.isocalendar()
+ic.week = 2
+"""
