@@ -245,9 +245,9 @@ def backToBackDayOf(day):
 
     return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
 
-
 """
 d = today.date()
 ic = d.isocalendar()
 ic.week = 2
+He was a POI
 """
