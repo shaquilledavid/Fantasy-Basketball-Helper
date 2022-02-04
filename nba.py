@@ -1,4 +1,6 @@
 import requests
+import calendar
+from itertools import groupby
 from datetime import date
 from datetime import timedelta
 from nba_api.stats.static import players
@@ -10,6 +12,8 @@ from nba_api.stats.endpoints import commonplayerinfo
 today = date.today().isoformat()
 tomorrowDelta = timedelta(hours=24)
 tomorrow = (date.today() + tomorrowDelta).isoformat()
+year = date.today().year
+calendar = calendar.Calendar()
 
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
@@ -245,6 +249,32 @@ def backToBackDayOf(day):
 
     return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
 
+def gamesPerTeamWeek(week):
+    weeks = (w for month in range(1, 13) for w in calendar.monthdatescalendar(year, month))
+    weeks = [k for k, _ in groupby(weeks)]
+    #this_week = date.today().isocalendar()[1]
+    gamesPerTeam = {}
+    
+    for date in weeks[week]:
+        teams = teamsThatPlayOn(date.isoformat())
+        for team in teams:
+            if team in gamesPerTeam:
+                gamesPerTeam[team] += 1
+            else:
+                gamesPerTeam[team] = 1
+
+    return gamesPerTeam 
+        
+def fourGameWeek(week):
+    breakdown = gamesPerTeamWeek(week)
+
+    teamsThatPlayFourTimes = []
+    for team in breakdown:
+        if breakdown[team] == 4:
+            teamsThatPlayFourTimes.append(team)
+
+    return teamsThatPlayFourTimes
+    
 """
 d = today.date()
 ic = d.isocalendar()
