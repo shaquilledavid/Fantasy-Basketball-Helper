@@ -220,9 +220,9 @@ def backToBackNext(day):
     return b2b
 
 def backToBackPrevious(day):
-    """Return a list of teams that play in a back-to-back on this day and the next."""
+    """Return a list of teams that play in a back-to-back on this day and the previous."""
     same_day = date.fromisoformat(day)
-    previous_day = same_day + tomorrowDelta
+    previous_day = same_day - tomorrowDelta
     
     b2b = []
     
@@ -236,10 +236,10 @@ def backToBackDayOf(day):
     same_day = date.fromisoformat(day)
     next_day = same_day + tomorrowDelta
     previous_day = same_day - tomorrowDelta
-
+    print(previous_day)
     dayAndNext = 'The teams that play on this date and the next are: '
     dayAndBefore = 'The teams that play on this date and the previous are: '
-
+    
     for team in backToBackNext(day):
         dayAndNext += team + ', '
 
