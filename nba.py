@@ -280,4 +280,5 @@ d = today.date()
 ic = d.isocalendar()
 ic.week = 2
 He was a POI
+bogus
 """
