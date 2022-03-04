@@ -236,7 +236,6 @@ def backToBackDayOf(day):
     same_day = date.fromisoformat(day)
     next_day = same_day + tomorrowDelta
     previous_day = same_day - tomorrowDelta
-    print(previous_day)
     dayAndNext = 'The teams that play on this date and the next are: '
     dayAndBefore = 'The teams that play on this date and the previous are: '
     
