@@ -19,7 +19,7 @@ calendar = calendar.Calendar()
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
 # The main API call
-response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2021/league/00_full_schedule.json")
+response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2022/league/00_full_schedule.json")
 
 # All teams
 teams = teams.get_teams()
@@ -236,6 +236,8 @@ def backToBackDayOf(day):
     same_day = date.fromisoformat(day)
     next_day = same_day + tomorrowDelta
     previous_day = same_day - tomorrowDelta
+    noneNext = 'There are no teams that play on this date and the next.'
+    nonePrevious = 'There are no teams that play on this date and the previous.'
     dayAndNext = 'The teams that play on this date and the next are: '
     dayAndBefore = 'The teams that play on this date and the previous are: '
     
@@ -245,8 +247,12 @@ def backToBackDayOf(day):
     for team in backToBackPrevious(day):
         dayAndBefore += team + ', '
 
-
-    return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
+    if backToBackNext(day) == [] and backToBackPrevious != []:
+        return dayAndBefore[:-2] + '. ' + noneNext
+    elif backToBackNext(day) != [] and backToBackPrevious == []:
+        return nonePrevious + ' ' + dayAndNext[:-2] + '.'
+    else:
+        return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
 
 def gamesPerTeamWeek(week):
     weeks = (w for month in range(1, 13) for w in calendar.monthdatescalendar(year, month))
