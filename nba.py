@@ -247,10 +247,13 @@ def backToBackDayOf(day):
     for team in backToBackPrevious(day):
         dayAndBefore += team + ', '
 
-    if backToBackNext(day) == [] and backToBackPrevious != []:
-        return dayAndBefore[:-2] + '. ' + noneNext
-    elif backToBackNext(day) != [] and backToBackPrevious == []:
+    if backToBackNext(day) != [] and backToBackPrevious(day) == []:
         return nonePrevious + ' ' + dayAndNext[:-2] + '.'
+    elif backToBackNext(day) == [] and backToBackPrevious(day) != []:
+        return dayAndBefore[:-2] + '. ' + noneNext
+
+    elif backToBackNext(day) == [] and backToBackPrevious(day) == []:
+        return "There are no teams that play on a back to back on this date, the previous, and the next."
     else:
         return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
 
