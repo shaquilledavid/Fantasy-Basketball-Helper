@@ -9,17 +9,18 @@ from nba_api.stats.endpoints import teamgamelog
 from nba_api.stats.endpoints import commonplayerinfo
 
 # Today's Date... documentation: https://docs.python.org/3/library/datetime.html
+# GLOBAL VARIABLES
 today = date.today().isoformat()
 tomorrowDelta = timedelta(hours=24)
 tomorrow = (date.today() + tomorrowDelta).isoformat()
 year = date.today().year
 calendar = calendar.Calendar()
-
+this_week = date.today().isocalendar()[1]
 # Basic Request
 player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
 # The main API call
-response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2022/league/00_full_schedule.json")
+response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2023/league/00_full_schedule.json")
 
 # All teams
 teams = teams.get_teams()
@@ -35,8 +36,8 @@ for team in teams:
     teams_abbrev[team['abbreviation']] = team['full_name']
 
 # Retrieve the current active players
-p = requests.get("http://data.nba.net/10s/prod/v1/2021/players.json")
-players = p.json()['league']['standard']
+p = requests.get("http://data.nba.net/10s/prod/v1/2023/players.json")
+#players = p.json()['league']['standard']
 
 # A dictionary containing active players and the team the last played for
 activePlayers = {}
@@ -44,9 +45,9 @@ activePlayers = {}
 # A dictionary containing teams and the players that play(ed) for them this year
 rosters = {}
 
-for player in players:
+"""for player in players:
     if len(player['teams']) > 0:
-        if player['teams'][-1]['seasonEnd'] == '2021':
+        if player['teams'][-1]['seasonEnd'] == '2023':
             link = activePlayers[player['firstName'] + ' ' + player['lastName']] = player['teams'][-1]['teamId']
             #now add the player to their team's roster
             if teamsId[link] in rosters:
@@ -55,7 +56,7 @@ for player in players:
                 rosters[teamsId[link]] = []
     else:
         pass
-
+"""
 # trying to work through the api call to understand how the data is stored
 #I understand that there are a set of 7 dictionaries with information -> len(response.json()['lscd'])
 
@@ -282,11 +283,14 @@ def fourGameWeek(week):
             teamsThatPlayFourTimes.append(team)
 
     return teamsThatPlayFourTimes
-    
-"""
-d = today.date()
-ic = d.isocalendar()
-ic.week = 2
-He was a POI
-bogus
-"""
+
+def fiveGameWeek(week):
+    breakdown = gamesPerTeamWeek(week)
+
+    teamsThatPlayFiveTimes = []
+    for team in breakdown:
+        if breakdown[team] == 5:
+            teamsThatPlayFiveTimes.append(team)
+
+    return teamsThatPlayFiveTimes
+
