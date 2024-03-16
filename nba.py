@@ -35,6 +35,8 @@ teams_abbrev = {}
 for team in teams:
     teams_abbrev[team['abbreviation']] = team['full_name']
 
+teamsList = [teams_abbrev[team] for team in teams_abbrev] 
+
 # Retrieve the current active players
 p = requests.get("http://data.nba.net/10s/prod/v1/2023/players.json")
 #players = p.json()['league']['standard']
@@ -195,7 +197,6 @@ def teamsThatPlayOn(day):
 
     return teams
     
-
 def scheduleDayOf(day):
     """A pretty print representation of the NBA games scheduled for the inputted date"""
     games = gamesDayOf(day)
@@ -216,19 +217,6 @@ def backToBackNext(day):
     
     for team in teamsThatPlayOn(day):
         if team in teamsThatPlayOn(date.isoformat(next_day)):
-            b2b.append(team)
-            
-    return b2b
-
-def backToBackPrevious(day):
-    """Return a list of teams that play in a back-to-back on this day and the previous."""
-    same_day = date.fromisoformat(day)
-    previous_day = same_day - tomorrowDelta
-    
-    b2b = []
-    
-    for team in teamsThatPlayOn(day):
-        if team in teamsThatPlayOn(date.isoformat(previous_day)):
             b2b.append(team)
             
     return b2b
@@ -257,6 +245,17 @@ def backToBackDayOf(day):
         return "There are no teams that play on a back to back on this date, the previous, and the next."
     else:
         return dayAndBefore[:-2] + '. ' + dayAndNext[:-2]
+
+def teamsResting():
+    """Return a list of teams that do not play today or tomorrow."""
+    resting = []
+    teamsToday = teamsThatPlayToday()
+    teamsTomorrow = teamsThatPlayTomorrow()
+    for team in teamsList:
+        if team not in teamsToday and team not in teamsTomorrow: 
+            resting.append(team)
+            
+    return resting
 
 def gamesPerTeamWeek(week):
     weeks = (w for month in range(1, 13) for w in calendar.monthdatescalendar(year, month))
