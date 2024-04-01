@@ -17,7 +17,7 @@ year = date.today().year
 calendar = calendar.Calendar()
 this_week = date.today().isocalendar()[1]
 # Basic Request
-player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
+#player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
 # The main API call
 response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2023/league/00_full_schedule.json")
@@ -293,5 +293,22 @@ def fiveGameWeek(week):
 
     return teamsThatPlayFiveTimes
 
+def scheduleThisWeek(team):
+    """Returns the schedule this week for inputted team. Input must be team's abbreviation
+    >>> scheduleThisWeek('SAC')
+    ['20240402/LACSAC', '20240404/SACNYK', '20240405/SACBOS', '20240407/SACBKN']
+    """
+    
+    weeks = (w for month in range(1, 13) for w in calendar.monthdatescalendar(year, month))
+    weeks = [k for k, _ in groupby(weeks)]
+    # i could generate all the games per week, then iterate through to find specific team, then add
+    sched = []
+    
+    for date in weeks[this_week]:
+        gamesThatDate = gamesDayOf(str(date))
+        for game in gamesThatDate:
+            if game[-3:] == team or game[-6:-3] == team:
+                sched.append(game)
 
-#games left this week
+    return sched
+
