@@ -294,7 +294,8 @@ def fiveGameWeek(week):
     return teamsThatPlayFiveTimes
 
 def scheduleThisWeek(team):
-    """Returns the schedule this week for inputted team. Input must be team's abbreviation
+    """
+    Returns the schedule this week for inputted team. Input must be team's abbreviation
     >>> scheduleThisWeek('SAC')
     ['20240402/LACSAC', '20240404/SACNYK', '20240405/SACBOS', '20240407/SACBKN']
     """
@@ -304,11 +305,26 @@ def scheduleThisWeek(team):
     # i could generate all the games per week, then iterate through to find specific team, then add
     sched = []
     
-    for date in weeks[this_week]:
+    for date in weeks[this_week-1]:   #this_week-1 because indices start at 0. weeks[0] is really week 1 irl.
         gamesThatDate = gamesDayOf(str(date))
         for game in gamesThatDate:
             if game[-3:] == team or game[-6:-3] == team:
                 sched.append(game)
 
     return sched
+
+def gamesLeftThisWeek(team):
+    """
+    Returns the number of games a team has left this week. If they have a game today, it is included in the return value.
+    """
+    games = scheduleThisWeek(team)
+    dayToday = today[-2:]
+    gamesLeft = []
+    for game in games:
+        if int(game[6:8]) >= int(dayToday):
+            gamesLeft.append(game)
+
+    return len(gamesLeft)
+        
+        
 
