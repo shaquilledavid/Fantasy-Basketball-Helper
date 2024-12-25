@@ -13,6 +13,8 @@ from nba_api.stats.endpoints import commonplayerinfo
 today = date.today().isoformat()
 tomorrowDelta = timedelta(hours=24)
 tomorrow = (date.today() + tomorrowDelta).isoformat()
+yesterdayDelta = timedelta(hours=-24)
+yesterday = (date.today() + yesterdayDelta).isoformat()
 year = date.today().year
 calendar = calendar.Calendar()
 this_week = date.today().isocalendar()[1]
@@ -20,7 +22,7 @@ this_week = date.today().isocalendar()[1]
 #player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
 # The main API call
-response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2023/league/00_full_schedule.json")
+response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2024/league/00_full_schedule.json")
 
 # All teams
 teams = teams.get_teams()
@@ -217,6 +219,19 @@ def backToBackNext(day):
     
     for team in teamsThatPlayOn(day):
         if team in teamsThatPlayOn(date.isoformat(next_day)):
+            b2b.append(team)
+            
+    return b2b
+
+def backToBackPrevious(day):
+    """Return a list of teams that play in a back-to-back on this day and the previous."""
+    same_day = date.fromisoformat(day)
+    prev_day = same_day + yesterdayDelta
+    
+    b2b = []
+    
+    for team in teamsThatPlayOn(day):
+        if team in teamsThatPlayOn(date.isoformat(prev_day)):
             b2b.append(team)
             
     return b2b
