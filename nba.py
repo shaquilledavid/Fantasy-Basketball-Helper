@@ -1,3 +1,4 @@
+import yahoo_fantasy_api as yfa
 import requests
 import calendar
 from itertools import groupby
@@ -7,6 +8,9 @@ from nba_api.stats.static import players
 from nba_api.stats.static import teams
 from nba_api.stats.endpoints import teamgamelog
 from nba_api.stats.endpoints import commonplayerinfo
+from yahoo_oauth import OAuth2
+
+
 
 # Today's Date... documentation: https://docs.python.org/3/library/datetime.html
 # GLOBAL VARIABLES
@@ -22,7 +26,7 @@ this_week = date.today().isocalendar()[1]
 #player_info = commonplayerinfo.CommonPlayerInfo(player_id=2544)
 
 # The main API call
-response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2024/league/00_full_schedule.json")
+response = requests.get("https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2025/league/00_full_schedule.json")
 
 # All teams
 teams = teams.get_teams()
@@ -342,4 +346,25 @@ def gamesLeftThisWeek(team):
     return len(gamesLeft)
         
         
+oauth = OAuth2('dj0yJmk9QVZpMmI2SGQ4ZmZsJmQ9WVdrOU4xZEJSWFZtVFRZbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTE3', '3844983381bfb5d0276cd44c06461e33f0855e5b')
+if not oauth.token_is_valid():
+    oauth.refresh_access_token()
 
+gm = yfa.Game(oauth, 'nba')
+leagues = gm.league_ids()
+
+#Blockchain League
+BEAM_TEAM_id = '466.l.45060.t.3'
+BLOCKCHAIN = gm.to_league(leagues[-3])
+BLOCKCHAIN_teams = BLOCKCHAIN.teams()
+
+my_team_BLOCKCHAIN = BLOCKCHAIN.to_team(BEAM_TEAM_id)
+BEAM_TEAM_roster = my_team_BLOCKCHAIN.roster()
+
+#Blacknesses League
+JOKICnCo_id = '466.l.42571.t.1'
+BLACKNESSES = gm.to_league(leagues[-4])
+BLACKNESSES_teams = BLACKNESSES.teams()
+
+my_team_BLACKNESSES = BLACKNESSES.to_team(BEAM_TEAM_id)
+BLACKNESSES_roster = my_team_BLACKNESSES.roster()
