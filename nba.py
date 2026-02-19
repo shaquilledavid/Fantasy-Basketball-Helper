@@ -346,7 +346,7 @@ def gamesLeftThisWeek(team):
     return len(gamesLeft)
         
         
-oauth = #replace this line
+oauth = OAuth2('dj0yJmk9QVZpMmI2SGQ4ZmZsJmQ9WVdrOU4xZEJSWFZtVFRZbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTE3', '3844983381bfb5d0276cd44c06461e33f0855e5b') #replace this line
 if not oauth.token_is_valid():
     oauth.refresh_access_token()
 
